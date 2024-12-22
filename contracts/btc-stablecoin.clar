@@ -15,3 +15,24 @@
 (define-constant ERR-PRICE-EXPIRED (err u1007))
 (define-constant ERR-ZERO-AMOUNT (err u1008))
 (define-constant ERR-MAX-AMOUNT-EXCEEDED (err u1009))
+
+;; System Parameters
+;; MIN-COLLATERAL-RATIO: Minimum collateralization ratio required to maintain a position (150%)
+(define-constant MIN-COLLATERAL-RATIO u150)
+;; LIQUIDATION-RATIO: Threshold at which positions become eligible for liquidation (120%)
+(define-constant LIQUIDATION-RATIO u120)
+;; MIN-DEPOSIT: Minimum amount of satoshis required for a deposit (0.01 BTC)
+(define-constant MIN-DEPOSIT u1000000)
+;; MAX-DEPOSIT: Maximum deposit limit to prevent excessive concentration (10,000 BTC)
+(define-constant MAX-DEPOSIT u1000000000000)
+;; PRICE-VALIDITY-PERIOD: Number of blocks before price data is considered stale
+(define-constant PRICE-VALIDITY-PERIOD u144)
+;; MAX-PRICE: Upper limit for BTC price to prevent manipulation
+(define-constant MAX-PRICE u1000000000)
+
+;; State Variables
+(define-data-var contract-owner principal tx-sender)
+(define-data-var price-oracle principal tx-sender)
+(define-data-var total-supply uint u0)
+(define-data-var btc-price uint u0)
+(define-data-var last-price-update uint block-height)
