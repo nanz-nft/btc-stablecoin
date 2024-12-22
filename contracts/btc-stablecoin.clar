@@ -248,3 +248,23 @@
       (ok true))
   )
 )
+
+;; Administrative functions
+;; Updates the BTC price, can only be called by authorized price oracle
+(define-public (set-price (new-price uint))
+  (begin
+    (asserts! (is-eq tx-sender (var-get price-oracle)) ERR-NOT-AUTHORIZED)
+    (asserts! (and (> new-price u0) (<= new-price MAX-PRICE)) ERR-INVALID-AMOUNT)
+    (var-set btc-price new-price)
+    (var-set last-price-update block-height)
+    (ok true))
+)
+
+;; Updates the price oracle address, can only be called by contract owner
+(define-public (set-price-oracle (new-oracle principal))
+  (begin
+    (asserts! (is-eq tx-sender (var-get contract-owner)) ERR-NOT-AUTHORIZED)
+    (asserts! (not (is-eq new-oracle (var-get price-oracle))) ERR-INVALID-AMOUNT)
+    (var-set price-oracle new-oracle)
+    (ok true))
+)
