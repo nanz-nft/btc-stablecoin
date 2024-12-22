@@ -80,3 +80,30 @@
 (define-read-only (get-current-price)
   (ok (var-get btc-price))
 )
+
+;; Private helper functions
+;; Ensures price data hasn't expired based on PRICE-VALIDITY-PERIOD
+(define-private (check-price-freshness)
+  (if (< (- block-height (var-get last-price-update)) PRICE-VALIDITY-PERIOD)
+    (ok true)
+    ERR-PRICE-EXPIRED
+  )
+)
+
+;; Validates amount is within acceptable bounds
+(define-private (validate-amount (amount uint))
+  (begin
+    (asserts! (> amount u0) ERR-ZERO-AMOUNT)
+    (asserts! (<= amount MAX-DEPOSIT) ERR-MAX-AMOUNT-EXCEEDED)
+    (ok true)
+  )
+)
+
+(define-private (check-min-collateral (amount uint))
+  (begin
+    (try! (validate-amount amount))
+    (if (>= amount MIN-DEPOSIT)
+      (ok true)
+      ERR-BELOW-MINIMUM)
+  )
+)
