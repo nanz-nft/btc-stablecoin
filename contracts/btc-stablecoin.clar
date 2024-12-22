@@ -36,3 +36,24 @@
 (define-data-var total-supply uint u0)
 (define-data-var btc-price uint u0)
 (define-data-var last-price-update uint block-height)
+
+;; Data Maps
+;; Stores user positions including collateral amount, debt, and last update block
+(define-map user-positions
+  principal
+  {
+    collateral: uint,
+    debt: uint,
+    last-update: uint
+  }
+)
+
+;; Records liquidation events for historical tracking and transparency
+(define-map liquidation-history
+  principal
+  {
+    timestamp: uint,
+    collateral-liquidated: uint,
+    debt-repaid: uint
+  }
+)
