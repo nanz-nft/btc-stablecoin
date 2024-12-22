@@ -169,3 +169,25 @@
       (ok true))
   )
 )
+
+;; Allows users to repay their stablecoin debt
+(define-public (repay-stablecoin (amount uint))
+  (begin
+    (try! (validate-amount amount))
+    (let (
+      (current-position (unwrap! (get-position tx-sender) ERR-POSITION-NOT-FOUND))
+    )
+      (asserts! (>= (get debt current-position) amount) ERR-INVALID-AMOUNT)
+
+      (map-set user-positions tx-sender
+        {
+          collateral: (get collateral current-position),
+          debt: (- (get debt current-position) amount),
+          last-update: block-height
+        }
+      )
+      (var-set total-supply (- (var-get total-supply) amount))
+      (ok true)
+    )
+  )
+)
