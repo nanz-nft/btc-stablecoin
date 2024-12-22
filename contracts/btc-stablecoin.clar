@@ -191,3 +191,26 @@
     )
   )
 )
+
+;; Enables withdrawal of excess collateral
+;; Ensures position remains properly collateralized after withdrawal
+(define-public (withdraw-collateral (amount uint))
+  (begin
+    (try! (validate-amount amount))
+    (let (
+      (current-position (unwrap! (get-position tx-sender) ERR-POSITION-NOT-FOUND))
+    )
+      (asserts! (>= (get collateral current-position) amount) ERR-INVALID-AMOUNT)
+
+      (map-set user-positions tx-sender
+        {
+          collateral: (- (get collateral current-position) amount),
+          debt: (get debt current-position),
+          last-update: block-height
+        }
+      )
+      (try! (check-position-health tx-sender))
+      (ok true)
+    )
+  )
+)
